@@ -7,4 +7,3 @@ x = 1
 y = 2
 result = my_function(x, y)
 print(result)
-
