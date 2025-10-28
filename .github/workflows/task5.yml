@@ -26,4 +26,4 @@ jobs:
       - name: Scan for secrets in openssl source code
         run: |
           echo "Scanning openssl repository for secrets..."
-          trivy fs --scanners secret --exit-code 1 tasks/task5/openssl/
+          trivy fs --scanners secret --exit-code 1 task5/openssl/
