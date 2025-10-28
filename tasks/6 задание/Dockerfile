@@ -2,6 +2,6 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-COPY bad_script.py .
+COPY app.py .
 
 CMD ["python", "app.py"]
