@@ -23,12 +23,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y trivy
       
-      - name: Clone openssl repository
-        run: |
-          echo "Cloning openssl repository..."
-          git clone https://github.com/TrooSlash/openssl.git
-      
       - name: Scan for secrets in openssl source code
         run: |
           echo "Scanning openssl repository for secrets..."
-          trivy fs --scanners secret --exit-code 1 openssl/
+          trivy fs --scanners secret --exit-code 1 tasks/task5/openssl/
