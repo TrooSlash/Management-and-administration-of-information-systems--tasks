@@ -3,7 +3,7 @@
 ## Описание
 
 Создать GitHub Actions workflow, который:
-- Клонирует репозиторий https://github.com/TrooSlash/openssl (форк openssl/openssl)
+- Сканирует локальную копию исходников openssl, находящуюся в репозитории
 - Запускает сканер безопасности Trivy с командой `trivy fs --scanners secret`
 - При наличии секретов — завершает пайплайн с ошибкой
 
@@ -11,28 +11,28 @@
 
 1. Сканироваться должны исходники проекта openssl
 2. ✅ **Проект форкнут:** https://github.com/TrooSlash/openssl
-3. При наличии секретов — workflow завершается с exit code 1
+3. ✅ **Исходники скопированы локально** в папку `task5/openssl/`
+4. При наличии секретов — workflow завершается с exit code 1
 
 ## Что делает workflow
 
 ### Шаги выполнения:
 
-1. **Checkout code** - скачивает текущий репозиторий
-2. **Install Trivy** - устанавливает сканер безопасности Trivy
-3. **Clone openssl repository** - клонирует форк openssl
-4. **Scan for secrets** - сканирует исходный код openssl на наличие секретов
+1. **Checkout code** - скачивает текущий репозиторий (включая все исходники openssl из `task5/openssl/`)
+2. **Install Trivy** - устанавливает сканер безопасности Trivy через APT
+3. **Scan for secrets** - сканирует локальные исходники openssl на наличие секретов
 
 ### Команда сканирования:
 
 ```bash
-trivy fs --scanners secret --exit-code 1 openssl/
+trivy fs --scanners secret --exit-code 1 task5/openssl/
 ```
 
 **Параметры:**
 - `fs` - сканирование файловой системы (исходного кода)
 - `--scanners secret` - включить только детектор секретов
 - `--exit-code 1` - завершить с кодом ошибки 1 при обнаружении секретов
-- `openssl/` - путь к склонированной папке openssl
+- `task5/openssl/` - путь к локальной копии исходников openssl
 
 ## Как запустить
 
@@ -86,19 +86,37 @@ OpenSSL — это криптографическая библиотека, по
 # Установите Trivy (Windows PowerShell)
 choco install trivy
 
-# Клонируйте форк openssl
-git clone https://github.com/TrooSlash/openssl.git
+# Перейдите в корневую папку репозитория
+cd D:\Yandex.Disk\project\p34
 
-# Запустите сканирование
-trivy fs --scanners secret openssl/
+# Запустите сканирование локальных исходников
+trivy fs --scanners secret task5/openssl/
+```
+
+## Структура проекта
+
+```
+p34/
+├── .github/
+│   └── workflows/
+│       └── task5.yml          # GitHub Actions workflow
+├── task5/
+│   └── openssl/               # Локальная копия исходников openssl (~8000+ файлов)
+│       ├── crypto/
+│       ├── ssl/
+│       ├── test/
+│       └── ...
+├── README.md                  # Этот файл
+└── Билеты.md                  # Задания на экзамен
 ```
 
 ## Проверка соответствия заданию
 
-✅ Workflow клонирует репозиторий openssl (форк TrooSlash/openssl)  
+✅ Исходники openssl находятся в репозитории (скопированы из форка)  
 ✅ Используется команда `trivy fs --scanners secret`  
 ✅ Флаг `--exit-code 1` завершает workflow при обнаружении секретов  
-✅ Сканируется папка `openssl/` (исходники проекта openssl)
+✅ Сканируется папка `task5/openssl/` (локальная копия исходников openssl)  
+✅ Workflow можно запустить вручную через `workflow_dispatch`
 
 ## Полезные ссылки
 
