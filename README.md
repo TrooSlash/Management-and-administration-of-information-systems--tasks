@@ -194,7 +194,7 @@ sudo apt-get install -y trivy
 **Базовое сканирование:**
 ```bash
 # Перейдите в корневую папку репозитория
-cd D:\Yandex.Disk\project\p34
+cd /path/to/your/repository
 
 # Запустите сканирование (без остановки при находках)
 trivy fs --scanners secret task5/openssl/
@@ -273,88 +273,14 @@ p34/
 - [Management-and-administration-of-information-systems--tasks](https://github.com/TrooSlash/Management-and-administration-of-information-systems--tasks)
 - [GitHub Actions Runs](https://github.com/TrooSlash/Management-and-administration-of-information-systems--tasks/actions)
 
-## Troubleshooting (решение проблем)
+---
 
-### Проблема: "Trivy not found"
+## Заключение
 
-**Решение:**
-```bash
-# Проверьте, установлен ли Trivy
-trivy --version
+Данное задание демонстрирует:
+- ✅ Автоматизацию сканирования безопасности в CI/CD
+- ✅ Обнаружение потенциально опасных данных в исходном коде
+- ✅ Интеграцию Trivy с GitHub Actions
+- ✅ Правильную обработку результатов сканирования
 
-# Если не установлен, установите согласно инструкции выше
-choco install trivy  # Windows
-```
-
-### Проблема: "Permission denied" при сканировании
-
-**Решение:**
-```bash
-# Windows: Запустите PowerShell от имени администратора
-# Linux: Используйте sudo или проверьте права доступа
-chmod -R 755 task5/openssl/
-```
-
-### Проблема: Workflow завершается с ошибкой
-
-**Это ожидаемое поведение!** Если Trivy находит секреты, он завершается с exit code 1.
-
-**Что делать:**
-1. Проверьте логи workflow в GitHub Actions
-2. Убедитесь, что найденные секреты - это тестовые данные
-3. Для реальных проектов - удалите или замените найденные секреты
-4. Для учебного проекта (как этот) - это нормально
-
-### Проблема: Слишком долгое сканирование
-
-**Решение:**
-```bash
-# Сканируйте только конкретную папку
-trivy fs --scanners secret task5/openssl/apps/
-
-# Или используйте параллельное сканирование
-trivy fs --scanners secret --parallel 8 task5/openssl/
-```
-
-## FAQ (Часто задаваемые вопросы)
-
-**Q: Почему workflow падает с ошибкой?**  
-A: Это правильное поведение! Флаг `--exit-code 1` заставляет Trivy завершаться с ошибкой при обнаружении секретов. Это нужно для CI/CD пайплайнов.
-
-**Q: Можно ли игнорировать определенные файлы?**  
-A: Да, используйте `.trivyignore` файл или флаг `--skip-files`:
-```bash
-trivy fs --scanners secret --skip-files "apps/*.pem" task5/openssl/
-```
-
-**Q: Как сканировать только HIGH и CRITICAL?**  
-A: Используйте флаг `--severity`:
-```bash
-trivy fs --scanners secret --severity HIGH,CRITICAL task5/openssl/
-```
-
-**Q: Можно ли запустить сканирование для других репозиториев?**  
-A: Да! Замените путь `task5/openssl/` на любую другую папку с исходниками.
-
-**Q: Что делать, если найдены реальные секреты?**  
-A: 
-1. Немедленно отозвать/изменить скомпрометированные credentials
-2. Удалить секреты из истории git (используйте git filter-branch или BFG)
-3. Использовать GitHub Secrets или переменные окружения
-4. Внедрить pre-commit хуки для предотвращения коммитов с секретами
-
-**Q: Сколько времени занимает сканирование?**  
-A: Для OpenSSL (~8000+ файлов) - около 3-5 секунд локально и 10-15 секунд в GitHub Actions.
-
-**Q: Можно ли интегрировать Trivy в pre-commit?**  
-A: Да! Создайте `.pre-commit-config.yaml`:
-```yaml
-repos:
-  - repo: local
-    hooks:
-      - id: trivy
-        name: Trivy secret scanner
-        entry: trivy fs --scanners secret --exit-code 1 .
-        language: system
-        pass_filenames: false
-```
+Workflow успешно выявляет секреты и завершается с ошибкой, что является корректным поведением системы безопасности.
