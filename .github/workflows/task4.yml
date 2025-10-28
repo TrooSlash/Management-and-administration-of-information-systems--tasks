@@ -3,7 +3,7 @@ name: Task 4 - Auto Build Docker Image
 on:
   push:
     paths:
-      - 'tasks/4 задание/**'
+      - 'tasks/task4/**'
   workflow_dispatch:
 
 jobs:
@@ -16,9 +16,6 @@ jobs:
       
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-        with:
-          driver-opts: |
-            image=moby/buildkit:latest
       
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -29,8 +26,6 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: ./tasks/4 задание
-          file: ./tasks/4 задание/Dockerfile
+          context: ./tasks/task4
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/task4:latest
-          provenance: false

@@ -21,7 +21,7 @@
    - `DOCKERHUB_PASSWORD` - токен доступа Docker Hub (создайте в Account Settings → Security)
 
 ### Запуск:
-- Автоматически при пуше в ветку main (изменения в папке `tasks/0 задание/`)
+- Автоматически при пуше в ветку main (изменения в папке `tasks/task0/`)
 - Вручную через Actions → Task 0 → Run workflow
 
 ---
@@ -40,7 +40,7 @@
 - `DOCKERHUB_PASSWORD`
 
 ### Запуск:
-- Автоматически при пуше в ветку main (изменения в папке `tasks/1 задание/`)
+- Автоматически при пуше в ветку main (изменения в папке `tasks/task1/`)
 - Вручную через Actions → Task 1 → Run workflow
 
 ### Workflow выполняет:
@@ -62,7 +62,7 @@
 - `DOCKERHUB_PASSWORD`
 
 ### Запуск:
-- Автоматически при пуше в **ЛЮБУЮ** ветку (изменения в папке `tasks/4 задание/`)
+- Автоматически при пуше в **ЛЮБУЮ** ветку (изменения в папке `tasks/task4/`)
 - Вручную через Actions → Task 4 → Run workflow
 
 ---
@@ -82,7 +82,7 @@
 - `DOCKERHUB_PASSWORD`
 
 ### Запуск:
-- Автоматически при пуше в любую ветку (изменения в папке `tasks/6 задание/`)
+- Автоматически при пуше в любую ветку (изменения в папке `tasks/task6/`)
 - Вручную через Actions → Task 6 → Run workflow
 
 ### Workflow выполняет:
@@ -126,20 +126,20 @@
     task4.yml   # Задание 4
     task6.yml   # Задание 6
 tasks/
-  0 задание/
+  task0/
     app.py
     Dockerfile
     requirements.txt
-  1 задание/
+  task1/
     app.py
     Dockerfile
     requirements.txt
     unit_test.py
-  4 задание/
+  task4/
     app.py
     Dockerfile
     requirements.txt
-  6 задание/
+  task6/
     app.py
     Dockerfile
     requirements.txt
