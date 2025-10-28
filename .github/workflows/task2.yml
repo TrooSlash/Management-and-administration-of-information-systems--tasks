@@ -23,7 +23,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y trivy
       
-      - name: Scan source code for CRITICAL vulnerabilities
+      - name: Clone grpc repository
         run: |
-          echo "Scanning repository for CRITICAL vulnerabilities..."
-          trivy fs --severity CRITICAL --exit-code 1 .
+          echo "Cloning grpc repository..."
+          git clone https://github.com/grpc/grpc.git
+      
+      - name: Scan grpc source code for CRITICAL vulnerabilities
+        run: |
+          echo "Scanning grpc repository for CRITICAL vulnerabilities..."
+          trivy fs --severity CRITICAL --exit-code 1 grpc/
