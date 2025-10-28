@@ -1,111 +1,108 @@
 # Задание 5: Сканирование секретов (openssl)
 
-## Описание задания
+## Описание
+
 Создать GitHub Actions workflow, который:
-- Запускает Trivy с параметром `--scanners secret` на исходниках openssl/openssl
-- Завершает пайплайн с ошибкой при обнаружении секретов
+- Клонирует репозиторий https://github.com/TrooSlash/openssl (форк openssl/openssl)
+- Запускает сканер безопасности Trivy с командой `trivy fs --scanners secret`
+- При наличии секретов — завершает пайплайн с ошибкой
 
 ## Требования
-- Сканируются исходники проекта https://github.com/openssl/openssl
-- Проект должен быть форкнут или скопирован в репозиторий
-- Используется команда `trivy fs --scanners secret`
 
-## Как выполнить
+1. Сканироваться должны исходники проекта openssl
+2. ✅ **Проект форкнут:** https://github.com/TrooSlash/openssl
+3. При наличии секретов — workflow завершается с exit code 1
 
-### Способ 1: Создание форка (рекомендуется)
+## Что делает workflow
 
-1. **Форкните репозиторий:**
-   - Перейдите на https://github.com/openssl/openssl
-   - Нажмите кнопку **Fork**
-   - Создайте форк в вашем аккаунте
+### Шаги выполнения:
 
-2. **Склонируйте форк:**
-   ```bash
-   git clone https://github.com/ВАШ_ЛОГИН/openssl.git
-   cd openssl
-   ```
+1. **Checkout code** - скачивает текущий репозиторий
+2. **Install Trivy** - устанавливает сканер безопасности Trivy
+3. **Clone openssl repository** - клонирует форк openssl
+4. **Scan for secrets** - сканирует исходный код openssl на наличие секретов
 
-3. **Добавьте workflow:**
-   Создайте файл `.github/workflows/trivy-secrets.yml`:
-   ```yaml
-   name: Trivy Secret Scan
-   
-   on:
-     push:
-       branches: [master, main]
-     workflow_dispatch:
-   
-   jobs:
-     secret-scan:
-       runs-on: ubuntu-latest
-       steps:
-         - uses: actions/checkout@v3
-         
-         - name: Install Trivy
-           run: |
-             sudo apt-get update
-             sudo apt-get install -y wget apt-transport-https gnupg lsb-release
-             curl -fsSL https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo gpg --dearmor -o /usr/share/keyrings/trivy.gpg
-             echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/trivy.list
-             sudo apt-get update
-             sudo apt-get install -y trivy
-         
-         - name: Scan for secrets
-           run: trivy fs --scanners secret --exit-code 1 .
-   ```
+### Команда сканирования:
 
-4. **Закоммитьте и запушьте:**
-   ```bash
-   git add .github/workflows/trivy-secrets.yml
-   git commit -m "Add Trivy secret scan"
-   git push
-   ```
-   
-   ⚠️ **Важно:** OpenSSL использует ветку `master`, а не `main`
+```bash
+trivy fs --scanners secret --exit-code 1 openssl/
+```
 
-5. **Проверьте результат:**
-   - Откройте вкладку **Actions** в вашем форке
-   - Workflow должен запуститься автоматически
+**Параметры:**
+- `fs` - сканирование файловой системы (исходного кода)
+- `--scanners secret` - включить только детектор секретов
+- `--exit-code 1` - завершить с кодом ошибки 1 при обнаружении секретов
+- `openssl/` - путь к склонированной папке openssl
 
-### Способ 2: Демонстрация на текущем репозитории
+## Как запустить
 
-Workflow `task5.yml` уже создан в основном репозитории.
+### Автоматический запуск:
+```bash
+git push origin main
+```
 
-Для запуска:
-1. Перейдите в Actions → Task 5
-2. Нажмите "Run workflow"
-
-## Что ищет Trivy
-
-Trivy ищет следующие типы секретов:
-- API ключи (AWS, GCP, Azure, etc.)
-- Токены доступа
-- Пароли в коде
-- Private keys
-- Сертификаты
-- Database connection strings
-- И другие чувствительные данные
-
-## Проверка выполнения
-
-✅ Workflow создан  
-✅ Trivy установлен  
-✅ Используется параметр `--scanners secret`  
-✅ Workflow завершается с ошибкой при обнаружении секретов (`--exit-code 1`)
+### Ручной запуск:
+1. Откройте вкладку **Actions** на GitHub
+2. Выберите workflow **Task 5 - Scan for Secrets**
+3. Нажмите **Run workflow** → **Run workflow**
 
 ## Ожидаемый результат
 
-- Workflow успешно запускается
-- Trivy сканирует исходники на наличие секретов
-- Если найдены секреты → workflow завершается с ошибкой (красный статус)
-- Если не найдены → workflow успешен (зелёный статус)
+### ✅ Если секретов НЕ найдено:
+- Workflow завершается успешно (зелёная галочка)
+- Exit code: 0
 
-## Примечание
+### ❌ Если найдены секреты:
+- Workflow завершается с ошибкой (красный крестик)
+- Exit code: 1
+- В логах будет список найденных секретов (API keys, tokens, passwords и т.д.)
 
-В проекте OpenSSL могут быть найдены тестовые ключи и сертификаты - это нормально для библиотеки криптографии. В реальном проекте такие файлы должны быть исключены из сканирования.
+**Это правильное поведение!** Workflow должен падать при обнаружении секретов.
+
+## Что ищет Trivy (типы секретов)
+
+Trivy может обнаружить:
+- AWS Access Keys
+- GitHub Tokens
+- Private SSH Keys
+- Database passwords
+- API Keys
+- OAuth tokens
+- JWT tokens
+- И многие другие типы credentials
+
+## Примечание об OpenSSL
+
+OpenSSL — это криптографическая библиотека, поэтому в её репозитории могут содержаться:
+- Тестовые приватные ключи
+- Примеры сертификатов
+- Демонстрационные credentials
+
+Это **нормально** для такого проекта, так как эти файлы используются для тестирования и документации.
+
+## Локальное тестирование
+
+```bash
+# Установите Trivy (Windows PowerShell)
+choco install trivy
+
+# Клонируйте форк openssl
+git clone https://github.com/TrooSlash/openssl.git
+
+# Запустите сканирование
+trivy fs --scanners secret openssl/
+```
+
+## Проверка соответствия заданию
+
+✅ Workflow клонирует репозиторий openssl (форк TrooSlash/openssl)  
+✅ Используется команда `trivy fs --scanners secret`  
+✅ Флаг `--exit-code 1` завершает workflow при обнаружении секретов  
+✅ Сканируется папка `openssl/` (исходники проекта openssl)
 
 ## Полезные ссылки
 
-- [Документация Trivy Secret Scanning](https://aquasecurity.github.io/trivy/latest/docs/scanner/secret/)
-- [Репозиторий openssl/openssl](https://github.com/openssl/openssl)
+- [Trivy Secret Scanning Documentation](https://trivy.dev/v0.67/docs/scanner/secret/)
+- [Форк openssl](https://github.com/TrooSlash/openssl)
+- [Оригинальный репозиторий openssl](https://github.com/openssl/openssl)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
