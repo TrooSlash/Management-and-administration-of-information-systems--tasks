@@ -277,4 +277,4 @@ tasks/
 - [PEP 8 Style Guide](https://peps.python.org/pep-0008/)
 - [Flake8 Documentation](https://flake8.pycqa.org/)
 - [pytest Documentation](https://docs.pytest.org/)
-- **Подробная инструкция по заданиям 2-9:** См. файл `TASKS_2-9_INSTRUCTIONS.md`
+
